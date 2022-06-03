@@ -1,0 +1,97 @@
+import {images} from "../Api/Images"
+
+export const ShopsData=[
+	{
+		id:1,
+		image:images.shop1,
+		distance:"10 km",
+		name:"Bismillah Car shop",
+		type:"car",
+		address:"chishtian road bhawalngar",
+		phone:"03027543636",
+	},
+	{
+		id:2,
+		image:images.shop2,
+		distance:"4 km",
+		name:"awan bike shop",
+		type:"bike",
+		address:"lahore road okara",
+		phone:"03018953233",
+	},
+	{
+		id:3,
+		image:images.shop3,
+		distance:"6 km",
+		name:"awan tractor shop",
+		type:"tractor",
+		address:"road chishtian bakhshan khan",
+		phone:"03045523189",
+	},
+	{
+		id:4,
+		image:images.shop4,
+		distance:"2 km",
+		name:"mughal tyre shop",
+		type:"puncher",
+		address:"daharanwala",
+		phone:"03331994566",
+	},
+	{
+		id:5,
+		image:images.shop4,
+		distance:"3 km",
+		name:"Heavy troller",
+		type:"troller",
+		address:"burewala road vihara",
+		phone:"03332194545",
+	}
+	,
+	{
+		id:6,
+		image:images.shop4,
+		distance:"4 km",
+		name:"subhan troller workshop",
+		type:"troller",
+		address:"smundari raod faisalabad",
+		phone:"03032198923",
+	},
+	{
+		id:7,
+		image:images.shop4,
+		distance:"6 km",
+		name:"qadir bike workshop",
+		type:"bike",
+		address:"adda 45f raod chishtian",
+		phone:"03072144960",
+	},
+	{
+		id:8,
+		image:images.shop4,
+		distance:"6 km",
+		name:"makka car workshop",
+		type:"car",
+		address:"faqeer wali haronabad",
+		phone:"03050180911",
+	}
+	,
+	{
+		id:9,
+		image:images.shop4,
+		distance:"3 km",
+		name:"chishtia car workshop",
+		type:"car",
+		address:"bhawlngar bypass",
+		phone:"03010153940",
+	}
+	,
+	{
+		id:10,
+		image:images.shop4,
+		distance:"3 km",
+		name:" mdeena tractor workshop",
+		type:"tractor",
+		address:"bhawlngar bypass",
+		phone:"03010153940",
+	}
+]
