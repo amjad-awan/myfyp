@@ -4,8 +4,9 @@ import {images} from "../src/Api/Images"
 import {FiEdit} from "react-icons/fi";
 import {BiExit} from "react-icons/bi";
 import {FiMapPin} from "react-icons/fi";
-import { ShopsData } from "./Api/ShopsData";
+import {ShopsData} from "./Api/ShopsData";
 import {ImCross} from "react-icons/im";
+import {BsArrowRightCircleFill} from "react-icons/bs";
 
 
 
@@ -13,6 +14,7 @@ import {ImCross} from "react-icons/im";
 const MainShops=()=>{
 	const [showCustomerProfile, setShowCustomerprofile]=useState(false)
 	const [showMap,setShwoMap]=useState(false)
+	const [showRequest,setShowRequest]=useState(false)
 
 	const [shopsData, setShopsData]=useState(ShopsData)
 	const [value, setValue]=useState("")
@@ -54,6 +56,13 @@ const seeMap=()=>{
 }
 const hideMap=()=>{
 	setShwoMap(false)
+}
+const handeContact =()=>{
+	setShowRequest(true)
+}
+
+const HideRuquest=()=>{
+	setShowRequest(false)
 }
 	return(
 		<div className="main-container">
@@ -115,7 +124,7 @@ const hideMap=()=>{
 									</div>
 			   
 								</div>
-								<button type="button" className="contact-btn">Contact</button>
+								<button type="button" className="contact-btn" onClick={handeContact}>Contact</button>
 							   </div>
 
 							)
@@ -138,6 +147,49 @@ const hideMap=()=>{
 		</div>
 </div>
 }
+
+{
+	showRequest &&<div className="send-request-form">
+	<div className="send-request">
+	<button className="hide-request" onClick={HideRuquest}><ImCross/></button>
+			<section class="center-section">
+        <div class="registor">
+        <div className="logo-div translate-logo">
+				   <img src={images.logo} className="logo" />
+			   </div>
+            <form>
+                <div class="form-group">
+                    <label for="name">vehcile name </label>
+                    <input type="text" class="form-control" id="name" aria-describedby="emailHelp" />
+                  </div>
+                <div class="form-group">
+                  <label for="type">vehcile type </label>
+                  <input type="text" class="form-control" id="type" aria-describedby="emailHelp" />
+                </div>
+                <div class="form-group">
+                    <label for="modal">vehicle modal</label>
+                    <input type="text" class="form-control" id="modal" aria-describedby="emailHelp" />
+                  </div>
+                  <div class="form-group">
+                    <label for="location">location</label>
+                    <input type="text" class="form-control" id="location" aria-describedby="emailHelp" />
+                  </div>
+                <div class="form-group">
+                  <label for="FAULT">FAULT TYPE	</label>
+                  <input type="text" class="form-control" id="FAULT" />
+                </div>
+				<div class="form-group">
+                  <label for="Phone">Phone no</label>
+                  <input type="text" class="form-control" id="Phone" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block btn-class">send request <BsArrowRightCircleFill className='arrow-over'/></button>
+              </form>  
+        </div>
+    </section>
+	</div>
+			</div> 
+}
+
 			   
 		</div>
 	)
