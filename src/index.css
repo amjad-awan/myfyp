@@ -496,3 +496,15 @@ font-weight: 500;
   color:#002F34;
 }
 
+.PhoneInputInput{
+  outline: none;
+  border: none;
+}
+
+center div{
+justify-content: center;
+}
+
+center div .form-control{
+  width: 35px !important;
+}
