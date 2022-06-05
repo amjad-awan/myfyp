@@ -12,11 +12,31 @@ import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebase/firebaseConfig";
 import MapsComponent from "./services/Maps";
 
-const MainShops=()=>{
-  const [latitude, setLat] = useState('')
-	const [showCustomerProfile, setShowCustomerprofile]=useState(false)
-	const [showMap,setShwoMap]=useState(false)
-	const [showRequest,setShowRequest]=useState(false)
+const MainShops = ({ onLogout }) => {
+  initializeApp(firebaseConfig);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isMounted = useRef(false);
+  const navigate = useNavigate();
+  const [showCustomerProfile, setShowCustomerprofile] = useState(false);
+  const [showMap, setShwoMap] = useState(false);
+  const [shopsData, setShopsData] = useState([]);
+  const [position, setPosition] = useState({});
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isMounted.current) getWorkshops();
+    else isMounted.current = true;
+  }, [latitude]);
+
   const getWorkshops = async () => {
     const response = await api.get(`workshop/get/${latitude}/${longitude}`);
     if (response && response.ok) {
@@ -191,4 +211,4 @@ const MainShops=()=>{
   );
 };
 
-export default MainShops
+export default MainShops;
