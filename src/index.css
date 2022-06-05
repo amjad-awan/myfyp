@@ -531,6 +531,7 @@ font-weight: 500;
   color:#002F34;
 }
 
+<<<<<<< HEAD
 .request-table
 {
   margin-top: 3rem;
@@ -555,3 +556,17 @@ table th, td{
 
 
 
+=======
+.PhoneInputInput{
+  outline: none;
+  border: none;
+}
+
+center div{
+justify-content: center;
+}
+
+center div .form-control{
+  width: 35px !important;
+}
+>>>>>>> bd1751928a14c96797b8d154e43681061833c4fc
