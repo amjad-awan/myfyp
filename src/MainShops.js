@@ -13,6 +13,7 @@ import { firebaseConfig } from "./firebase/firebaseConfig";
 import MapsComponent from "./services/Maps";
 
 const MainShops=()=>{
+  const [latitude, setLat] = useState('')
 	const [showCustomerProfile, setShowCustomerprofile]=useState(false)
 	const [showMap,setShwoMap]=useState(false)
 	const [showRequest,setShowRequest]=useState(false)
