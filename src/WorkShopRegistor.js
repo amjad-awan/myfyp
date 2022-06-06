@@ -213,7 +213,7 @@ const WorkShopRegistor = () => {
               <img src={images.logo} alt="" className="logo" />
             </div>
             <h1 className="heading">Workshop registration</h1>
-            <form onSubmit={(e) => sendOtpVerification(e)}>
+            <form>
               <div className="form-group">
                 <label htmlFor="shopNameInput">Workshop name </label>
                 <input
@@ -304,6 +304,7 @@ const WorkShopRegistor = () => {
               </div>
               <button
                 type="submit"
+                onClick={(e) => sendOtpVerification(e)}
                 id="signIn"
                 className="btn btn-primary btn-block btn-class"
               >

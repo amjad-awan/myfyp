@@ -3,14 +3,12 @@ import { FiEdit } from "react-icons/fi";
 import { BiExit } from "react-icons/bi";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
-import { images } from "../src/Api/Images";
+import { images } from "./Api/Images";
 import { Link } from "react-router-dom";
 import { api } from "./services/apiSvc";
 import { Button } from "react-bootstrap";
-import { signOut } from "firebase/auth";
 
-const ShopManage = () => {
-  const user = localStorage.getItem("user");
+const UserRequests = () => {
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
 
@@ -19,7 +17,7 @@ const ShopManage = () => {
   }, []);
 
   const getRequests = async () => {
-    const response = await api.get("/getAllRequest");
+    const response = await api.get("/getUserRequests");
     if (response && response.ok) {
       setRequests(response.data);
     }
@@ -63,14 +61,11 @@ const ShopManage = () => {
             />
             {showCustomerProfile && (
               <div className="profile-data">
-                <p className="name">{user.name}</p>
+                <p className="name">Amjad mehmood</p>
                 <p className="edit-profile">
                   <FiEdit /> Edit profile
                 </p>
-                <p
-                  className="logout"
-                  onClick={() => signOut().then(() => localStorage.clear())}
-                >
+                <p className="logout">
                   <BiExit /> log out
                 </p>
               </div>
@@ -85,12 +80,9 @@ const ShopManage = () => {
               <thead>
                 <tr>
                   <th>Sr#</th>
-                  <th>Vehicle Name</th>
-                  <th>Vehicle Type</th>
-                  <th>Vehicle Model</th>
-                  <th>Fault</th>
+                  <th>Workshop Name</th>
+                  <th>Workshop Address</th>
                   <th>Phone Number</th>
-                  <th>Location</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -101,12 +93,9 @@ const ShopManage = () => {
                     return (
                       <tr key={ind}>
                         <td>{ind + 1}</td>
-                        <td>{req.vehicle_name}</td>
-                        <td>{req.vehicle_type}</td>
-                        <td>{req.vehicle_model}</td>
-                        <td>{req.fault}</td>
-                        <td>{req.phone}</td>
-                        <td>{}</td>
+                        <td>{req.Workshop.name}</td>
+                        <td>{req.Workshop.address}</td>
+                        <td>{req.Workshop.mobile}</td>
                         <td>{req.status}</td>
                         <td>
                           <Button>
@@ -125,4 +114,4 @@ const ShopManage = () => {
   );
 };
 
-export default ShopManage;
+export default UserRequests;

@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import spinnerSvc from "./services/spinnerSvc";
 import LoaderSpinner from "./services/modal";
 import { ToastContainer } from "react-toastify";
+import ShopManage from "./Shopmanage";
+import UserRequests from "./UserRequests";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -61,12 +63,25 @@ function App() {
               </>
             ) : (
               <>
-                <Route path="/" element={<Navigate to="/MainShops" />} />
-                <Route path="*" element={<Navigate to="/MainShops" />} />
-                <Route
-                  path="/MainShops"
-                  element={<MainShops onLogout={() => setLoggedIn(false)} />}
-                />
+                {user?.role === "Customer" ? (
+                  <>
+                    <Route path="/" element={<Navigate to="/MainShops" />} />
+                    <Route path="*" element={<Navigate to="/MainShops" />} />
+                    <Route
+                      path="/MainShops"
+                      element={
+                        <MainShops onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
+                    <Route path="/UserRequests" element={<UserRequests />} />
+                  </>
+                ) : (
+                  <>
+                    <Route path="/" element={<Navigate to="/Requests" />} />
+                    <Route path="*" element={<Navigate to="/Requests" />} />
+                    <Route path="/Requests" element={<ShopManage />} />
+                  </>
+                )}
               </>
             )}
           </Routes>

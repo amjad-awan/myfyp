@@ -11,6 +11,8 @@ import { api } from "./services/apiSvc";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebase/firebaseConfig";
 import MapsComponent from "./services/Maps";
+import DirectionRenderComponentAsync from "./services/Maps";
+import { RequestForm } from "./services/RequestForm";
 
 const MainShops = ({ onLogout }) => {
   initializeApp(firebaseConfig);
@@ -19,10 +21,12 @@ const MainShops = ({ onLogout }) => {
   const navigate = useNavigate();
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [showMap, setShwoMap] = useState(false);
+  const [show, setShow] = useState(false);
   const [shopsData, setShopsData] = useState([]);
   const [position, setPosition] = useState({});
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [selected, setSelected] = useState("");
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
@@ -31,6 +35,9 @@ const MainShops = ({ onLogout }) => {
       setLongitude(position.coords.longitude);
     });
   }, []);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   useEffect(() => {
     if (isMounted.current) getWorkshops();
@@ -186,7 +193,14 @@ const MainShops = ({ onLogout }) => {
                         <p className="phoneno">{mobile}</p>
                       </div>
                     </div>
-                    <button type="button" className="contact-btn">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleShow();
+                        setSelected(shop._id);
+                      }}
+                      className="contact-btn"
+                    >
                       Contact
                     </button>
                   </div>
@@ -202,11 +216,15 @@ const MainShops = ({ onLogout }) => {
               <ImCross />
             </button>
             <div>
-              <MapsComponent position={position} />
+              <DirectionRenderComponentAsync
+                from={{ lat: 22.235234234, lng: 43.234234234 }}
+                to={{ lat: 42.32434234, lng: 32.234323 }}
+              />
             </div>
           </div>
         )}
       </div>
+      <RequestForm show={show} handleClose={handleClose} selected={selected} />
     </>
   );
 };
