@@ -512,3 +512,7 @@ center div .form-control {
   justify-content: center;
   padding-top: 5px;
 }
+
+.table td, .table th {
+  vertical-align: middle;
+}

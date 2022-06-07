@@ -1,20 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { images } from "../src/Api/Images";
-import { FiEdit } from "react-icons/fi";
-import { BiExit } from "react-icons/bi";
 import { FiMapPin } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, signOut } from "firebase/auth";
 import { api } from "./services/apiSvc";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebase/firebaseConfig";
-import MapsComponent from "./services/Maps";
-import DirectionRenderComponentAsync from "./services/Maps";
 import { RequestForm } from "./services/RequestForm";
 import { Profile } from "./services/Profile";
-import { Button } from "react-bootstrap";
+import Maps from "./services/Maps";
 
 const MainShops = ({ onLogout }) => {
   initializeApp(firebaseConfig);
@@ -24,8 +19,9 @@ const MainShops = ({ onLogout }) => {
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [showMap, setShwoMap] = useState(false);
   const [show, setShow] = useState(false);
+  // const [positions, setPosition] = useState([]);
   const [shopsData, setShopsData] = useState([]);
-  const [position, setPosition] = useState({});
+  const [position, setPosition] = useState([]);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [selected, setSelected] = useState("");
@@ -62,6 +58,10 @@ const MainShops = ({ onLogout }) => {
           };
         })
       );
+      setPosition([
+        ...position,
+        { name: user.name, latitude: latitude, longitude: longitude },
+      ]);
     }
   };
 
@@ -95,14 +95,15 @@ const MainShops = ({ onLogout }) => {
     setSearchText(e.target.value);
   };
 
-  const seeMap = (lat, long) => {
-    setPosition({ lat: lat, lng: long });
+  const seeMap = (name, lat, long) => {
+    setPosition([...position, { name: name, latitude: lat, longitude: long }]);
     setShwoMap(true);
   };
 
   const hideMap = () => {
     setShwoMap(false);
   };
+  console.log(position);
   return (
     <>
       <div className="main-container">
@@ -165,7 +166,9 @@ const MainShops = ({ onLogout }) => {
 
                         <p
                           className="map"
-                          onClick={() => seeMap(shop.latitude, shop.longitude)}
+                          onClick={() =>
+                            seeMap(name, shop.latitude, shop.longitude)
+                          }
                         >
                           see on map <FiMapPin />
                         </p>
@@ -204,10 +207,7 @@ const MainShops = ({ onLogout }) => {
               <ImCross />
             </button>
             <div>
-              <DirectionRenderComponentAsync
-                from={{ lat: 22.235234234, lng: 43.234234234 }}
-                to={{ lat: 42.32434234, lng: 32.234323 }}
-              />
+              <Maps value={position} />
             </div>
           </div>
         )}

@@ -5,14 +5,28 @@ import { BsXLg } from "react-icons/bs";
 import { SiGooglemaps } from "react-icons/si";
 import { images } from "../src/Api/Images";
 import { Link } from "react-router-dom";
+import { ImCross } from "react-icons/im";
 import { api } from "./services/apiSvc";
 import { Badge, Button } from "react-bootstrap";
 import { Profile } from "./services/Profile";
 import notificationSvc from "./services/notificationSvc";
+import Maps from "./services/Maps";
 
 const ShopManage = (onLogout) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
+  const [position, setPosition] = useState([]);
+  const [showMap, setShwoMap] = useState(false);
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (position) {
+      setLatitude(position.coords.latitude);
+      setLongitude(position.coords.longitude);
+    });
+  }, []);
 
   useEffect(() => {
     getRequests();
@@ -25,6 +39,15 @@ const ShopManage = (onLogout) => {
     }
   };
 
+  const seeMap = (name, lat, long) => {
+    setPosition([
+      ...position,
+      { name: name, latitude: lat, longitude: long },
+      { name: user.name, latitude: latitude, longitude: longitude },
+    ]);
+    setShwoMap(true);
+  };
+
   const updateStatus = async (id, status) => {
     const response = await api.post("/updateRequest", {
       id: id,
@@ -34,6 +57,10 @@ const ShopManage = (onLogout) => {
       notificationSvc.success("Request " + status + " Successfully");
       getRequests();
     }
+  };
+
+  const hideMap = () => {
+    setShwoMap(false);
   };
 
   return (
@@ -105,7 +132,16 @@ const ShopManage = (onLogout) => {
                         <td>{req.fault}</td>
                         <td>{req.phone}</td>
                         <td>
-                          <SiGooglemaps />
+                          <SiGooglemaps
+                            style={{ fontSize: "20px" }}
+                            onClick={() =>
+                              seeMap(
+                                req.Workshop.name,
+                                req.Workshop.latitude,
+                                req.Workshop.longitude
+                              )
+                            }
+                          />
                         </td>
                         <td>
                           <Badge
@@ -155,6 +191,16 @@ const ShopManage = (onLogout) => {
           </div>
         </div>
       </div>
+      {showMap && (
+        <div className="see-on-map">
+          <button className="hide-map" onClick={hideMap}>
+            <ImCross />
+          </button>
+          <div>
+            <Maps value={position} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

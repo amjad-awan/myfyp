@@ -1,64 +1,83 @@
-import React, { Component } from "react";
-import { render } from "react-dom";
-import ReactMapGL, { Source, Layer } from "react-map-gl";
-class Maps extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      viewport: {
-        latitude: 38.63738602787579,
-        longitude: -121.23576311149986,
-        zoom: 6.8,
-        bearing: 0,
-        pitch: 0,
-        dragPan: true,
-        width: 600,
-        height: 600,
-      },
-    };
+import React, { useState } from "react";
+import {
+  GoogleMap,
+  InfoWindow,
+  Marker,
+  useJsApiLoader,
+} from "@react-google-maps/api";
+
+const containerStyle = {
+  width: "400px",
+  height: "400px",
+};
+
+const center = {
+  lat: -3.745,
+  lng: -38.523,
+};
+
+function Maps(props) {
+  const [activeMarker, setActiveMarker] = useState("");
+  const { isLoaded } = useJsApiLoader({
+    id: "google-map-script",
+    googleMapsApiKey: "AIzaSyB7R4wPyILvLMpGIN8zOCAA52oSPpLdLWQ",
+  });
+
+  let markers = [];
+
+  const handleActiveMarker = (marker) => {
+    if (marker === activeMarker) {
+      return;
+    }
+    setActiveMarker(marker);
+  };
+
+  if (props.value.length > 0) {
+    markers = props.value.map((x, i) => {
+      return {
+        id: i,
+        name: x.name,
+        position: {
+          lat: x.latitude,
+          lng: x.longitude,
+        },
+      };
+    });
   }
 
-  render() {
-    const { viewport } = this.state;
-    const MAPBOX_TOKEN =
-      "pk.eyJ1IjoibXVoYW1tYWQtemFoaWQiLCJhIjoiY2w0Mmo0YmZvMDVjNjNmbWxzbzRmZHhodSJ9.-5UYBxiWXPaUdIQv9LqSzQ";
+  const onLoad = React.useCallback(function callback(map) {
+    if (markers.length > 1) {
+      const bounds = new window.google.maps.LatLngBounds();
+      markers.forEach(({ position }) => bounds.extend(position));
+      map.fitBounds(bounds);
+    }
+  }, []);
 
-    const dataOne = {
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [-122.41510269913951, 37.77909036739809],
-          [39.5423, -77.0564],
-        ],
-      },
-    };
-    return (
-      <ReactMapGL
-        {...viewport}
-        mapboxApiAccessToken={MAPBOX_TOKEN}
-        onViewportChange={(newViewport) => {
-          this.setState({ viewport: newViewport });
-        }}
-      >
-        <Source id="polylineLayer" type="geojson" data={dataOne}>
-          <Layer
-            id="lineLayer"
-            type="line"
-            source="my-data"
-            layout={{
-              "line-join": "round",
-              "line-cap": "round",
-            }}
-            paint={{
-              "line-color": "rgba(3, 170, 238, 0.5)",
-              "line-width": 5,
-            }}
-          />
-        </Source>
-      </ReactMapGL>
-    );
-  }
+  return isLoaded ? (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={10}
+      onLoad={onLoad}
+      // onUnmount={onUnmount}
+    >
+      {markers.map(({ id, name, position }) => (
+        <Marker
+          key={id}
+          position={position}
+          onClick={() => handleActiveMarker(id)}
+        >
+          {activeMarker === id ? (
+            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+              <div>{name}</div>
+            </InfoWindow>
+          ) : null}
+        </Marker>
+      ))}
+    </GoogleMap>
+  ) : (
+    <></>
+  );
 }
-export default Maps;
+
+export default React.memo(Maps);
