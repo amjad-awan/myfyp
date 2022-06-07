@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { FiEdit } from "react-icons/fi";
-import { BiExit } from "react-icons/bi";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
+import { BsXLg } from "react-icons/bs";
+import { SiGooglemaps } from "react-icons/si";
 import { images } from "../src/Api/Images";
 import { Link } from "react-router-dom";
 import { api } from "./services/apiSvc";
-import { Button } from "react-bootstrap";
-import { signOut } from "firebase/auth";
+import { Badge, Button } from "react-bootstrap";
+import { Profile } from "./services/Profile";
+import notificationSvc from "./services/notificationSvc";
 
-const ShopManage = () => {
-  const user = localStorage.getItem("user");
+const ShopManage = (onLogout) => {
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
 
@@ -22,6 +22,17 @@ const ShopManage = () => {
     const response = await api.get("/getAllRequest");
     if (response && response.ok) {
       setRequests(response.data);
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    const response = await api.post("/updateRequest", {
+      id: id,
+      status: status,
+    });
+    if (response && response.ok) {
+      notificationSvc.success("Request " + status + " Successfully");
+      getRequests();
     }
   };
 
@@ -61,20 +72,7 @@ const ShopManage = () => {
               alt=""
               className="customer-profile-img"
             />
-            {showCustomerProfile && (
-              <div className="profile-data">
-                <p className="name">{user.name}</p>
-                <p className="edit-profile">
-                  <FiEdit /> Edit profile
-                </p>
-                <p
-                  className="logout"
-                  onClick={() => signOut().then(() => localStorage.clear())}
-                >
-                  <BiExit /> log out
-                </p>
-              </div>
-            )}
+            {showCustomerProfile && <Profile onLogout={onLogout} />}
           </div>
         </div>
       </div>
@@ -106,12 +104,48 @@ const ShopManage = () => {
                         <td>{req.vehicle_model}</td>
                         <td>{req.fault}</td>
                         <td>{req.phone}</td>
-                        <td>{}</td>
-                        <td>{req.status}</td>
                         <td>
-                          <Button>
-                            <BiCheck />
-                          </Button>
+                          <SiGooglemaps />
+                        </td>
+                        <td>
+                          <Badge
+                            bg={
+                              req.status === "Pending"
+                                ? "warning"
+                                : req.status === "Rejected"
+                                ? "danger"
+                                : "primary"
+                            }
+                            text="dark"
+                          >
+                            {req.status}
+                          </Badge>
+                        </td>
+                        <td>
+                          {req.status === "Pending" && (
+                            <>
+                              <Button
+                                variant="primary"
+                                style={{ marginRight: "10px" }}
+                                onClick={() =>
+                                  updateStatus(req._id, "Accepted")
+                                }
+                                className="fab"
+                              >
+                                <BiCheck />
+                              </Button>
+                              <Button
+                                variant="danger"
+                                style={{ fontSize: "14px" }}
+                                onClick={() =>
+                                  updateStatus(req._id, "Rejected")
+                                }
+                                className="fab"
+                              >
+                                <BsXLg />
+                              </Button>
+                            </>
+                          )}
                         </td>
                       </tr>
                     );

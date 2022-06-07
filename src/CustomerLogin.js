@@ -96,14 +96,14 @@ const CustomerLogin = ({ onLogin }) => {
   };
   return (
     <>
-      {/* {showLoader && <LoaderSpinner />} */}
+      {showLoader && <LoaderSpinner />}
       <div className="bg">
         <section className="center-section">
           <div className="registor">
             <div className="logo-div translate-logo">
               <img src={images.logo} alt="" className="logo" />
             </div>
-            <h1 className="heading">customer Login</h1>
+            <h1 className="heading">Login</h1>
             <form onSubmit={(e) => SignIn(e)}>
               <div className="form-group">
                 <label htmlFor="exampleInputEmail1">Email address</label>
@@ -138,18 +138,18 @@ const CustomerLogin = ({ onLogin }) => {
             <Link to="/CustomerRegister" className="no-account-link">
               if didn't registor yet, click here to registor
             </Link>
-            <div className="or-line">
+            {/* <div className="or-line">
               <span className="or"> or login with</span>
-            </div>
+            </div> */}
 
-            <div className="social-plate-form">
+            {/* <div className="social-plate-form">
               <span>
                 <FcGoogle />
               </span>
               <span>
                 <FiFacebook />
               </span>
-            </div>
+            </div> */}
           </div>
         </section>
       </div>

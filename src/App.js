@@ -18,6 +18,7 @@ import LoaderSpinner from "./services/modal";
 import { ToastContainer } from "react-toastify";
 import ShopManage from "./Shopmanage";
 import UserRequests from "./UserRequests";
+import Maps from "./services/Maps";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -73,13 +74,24 @@ function App() {
                         <MainShops onLogout={() => setLoggedIn(false)} />
                       }
                     />
-                    <Route path="/UserRequests" element={<UserRequests />} />
+                    <Route
+                      path="/UserRequests"
+                      element={
+                        <UserRequests onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
                   </>
                 ) : (
                   <>
                     <Route path="/" element={<Navigate to="/Requests" />} />
                     <Route path="*" element={<Navigate to="/Requests" />} />
-                    <Route path="/Requests" element={<ShopManage />} />
+                    <Route path="/map" element={<Maps />} />
+                    <Route
+                      path="/Requests"
+                      element={
+                        <ShopManage onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
                   </>
                 )}
               </>

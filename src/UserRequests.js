@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FiEdit } from "react-icons/fi";
-import { BiExit } from "react-icons/bi";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
+import { SiGooglemaps } from "react-icons/si";
 import { images } from "./Api/Images";
 import { Link } from "react-router-dom";
 import { api } from "./services/apiSvc";
-import { Button } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
+import { Profile } from "./services/Profile";
 
-const UserRequests = () => {
+const UserRequests = ({ onLogout }) => {
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
 
@@ -59,17 +59,7 @@ const UserRequests = () => {
               alt=""
               className="customer-profile-img"
             />
-            {showCustomerProfile && (
-              <div className="profile-data">
-                <p className="name">Amjad mehmood</p>
-                <p className="edit-profile">
-                  <FiEdit /> Edit profile
-                </p>
-                <p className="logout">
-                  <BiExit /> log out
-                </p>
-              </div>
-            )}
+            {showCustomerProfile && <Profile onLogout={onLogout} />}
           </div>
         </div>
       </div>
@@ -83,6 +73,7 @@ const UserRequests = () => {
                   <th>Workshop Name</th>
                   <th>Workshop Address</th>
                   <th>Phone Number</th>
+                  <th>Location</th>
                   <th>Status</th>
                   <th>Action</th>
                 </tr>
@@ -96,11 +87,33 @@ const UserRequests = () => {
                         <td>{req.Workshop.name}</td>
                         <td>{req.Workshop.address}</td>
                         <td>{req.Workshop.mobile}</td>
-                        <td>{req.status}</td>
                         <td>
-                          <Button>
-                            <BiCheck />
-                          </Button>
+                          <SiGooglemaps />
+                        </td>
+                        <td>
+                          <Badge
+                            bg={
+                              req.status === "Pending"
+                                ? "warning"
+                                : req.status === "Rejected"
+                                ? "danger"
+                                : "primary"
+                            }
+                            text="dark"
+                          >
+                            {req.status}
+                          </Badge>
+                        </td>
+                        <td>
+                          {req.status === "Accepted" && (
+                            <Button
+                              variant="primary"
+                              style={{ marginRight: "10px" }}
+                              className="fab"
+                            >
+                              <BiCheck />
+                            </Button>
+                          )}
                         </td>
                       </tr>
                     );

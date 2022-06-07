@@ -13,6 +13,8 @@ import { firebaseConfig } from "./firebase/firebaseConfig";
 import MapsComponent from "./services/Maps";
 import DirectionRenderComponentAsync from "./services/Maps";
 import { RequestForm } from "./services/RequestForm";
+import { Profile } from "./services/Profile";
+import { Button } from "react-bootstrap";
 
 const MainShops = ({ onLogout }) => {
   initializeApp(firebaseConfig);
@@ -88,13 +90,6 @@ const MainShops = ({ onLogout }) => {
     return deg * (Math.PI / 180);
   };
 
-  const logout = () => {
-    localStorage.clear();
-    signOut(getAuth()).then(() => {
-      onLogout();
-      navigate("/");
-    });
-  };
   const handleValue = (e) => {
     setShowCustomerprofile(false);
     setSearchText(e.target.value);
@@ -146,17 +141,7 @@ const MainShops = ({ onLogout }) => {
                 className="customer-profile-img"
                 alt=""
               />
-              {showCustomerProfile && (
-                <div className="profile-data">
-                  <p className="name">{user?.name}</p>
-                  <p className="edit-profile">
-                    <FiEdit /> Edit profile
-                  </p>
-                  <p className="logout" onClick={() => logout()}>
-                    <BiExit /> log out
-                  </p>
-                </div>
-              )}
+              {showCustomerProfile && <Profile onLogout={onLogout} />}
             </div>
           </div>
         </div>
@@ -164,6 +149,9 @@ const MainShops = ({ onLogout }) => {
         <div className="shops-top">
           <div className="container">
             <p className="mr-auto recommend">{result.length} Results</p>
+            <Link className="btn btn-primary" to="/UserRequests">
+              My Requests
+            </Link>
             <div className="shops-container">
               {result.map((shop, index) => {
                 const { imageUrl, distance, name, type, address, mobile } =

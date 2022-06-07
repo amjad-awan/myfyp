@@ -1,160 +1,64 @@
 import React, { Component } from "react";
-import { convertLatLngToObj } from "../utility/helper";
-import { Marker, DirectionsRenderer } from "react-google-maps";
-
-class DirectionRenderComponentAsync extends Component {
-  state = {
-    directions: null,
-    wayPoints: null,
-    currentLocation: null,
-  };
-  delayFactor = 0;
-
-  getDirectionsPromise = (startLoc, destinationLoc, wayPoints) =>
-    this.getDirections(startLoc, destinationLoc, wayPoints).then((response) => {
-      if (response.status === window.google.maps.DirectionsStatus.OK) {
-        const wayPts = response.result.routes[0].overview_path.filter(
-          (elem, index) => {
-            return index % 10 === 0;
-          }
-        );
-        this.setState({
-          directions: response.result,
-          wayPoints: wayPts,
-        });
-        this.setCurrentLocation(wayPts);
-      } else if (
-        response.status === window.google.maps.DirectionsStatus.OVER_QUERY_LIMIT
-      ) {
-        this.delayFactor += 0.2;
-        if (this.delayFactor === 15) {
-          this.delayFactor = 0.2;
-        }
-        setTimeout(() => {
-          this.getDirectionsPromise(
-            startLoc,
-            destinationLoc,
-            response.wayPoints
-          );
-        }, this.delayFactor * 200);
-      } else {
-        console.error(`error fetching directions ${response.result}`);
-      }
-    });
-
-  componentDidMount() {
-    const startLoc = `${this.props.from.lat}, ${this.props.from.lng}`;
-    const destinationLoc = `${this.props.to.lat}, ${this.props.to.lng}`;
-    this.getDirectionsPromise(startLoc, destinationLoc, []);
+import { render } from "react-dom";
+import ReactMapGL, { Source, Layer } from "react-map-gl";
+class Maps extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      viewport: {
+        latitude: 38.63738602787579,
+        longitude: -121.23576311149986,
+        zoom: 6.8,
+        bearing: 0,
+        pitch: 0,
+        dragPan: true,
+        width: 600,
+        height: 600,
+      },
+    };
   }
 
-  async getDirections(startLoc, destinationLoc, wayPoints = []) {
-    return new Promise((resolve, reject) => {
-      const waypts = [];
-      if (wayPoints.length > 0) {
-        waypts.push({
-          location: new window.google.maps.LatLng(
-            wayPoints[0].lat,
-            wayPoints[0].lng
-          ),
-          stopover: true,
-        });
-      }
-      const DirectionsService = new window.google.maps.DirectionsService();
-      DirectionsService.route(
-        {
-          origin: startLoc,
-          destination: destinationLoc,
-          waypoints: waypts,
-          optimizeWaypoints: true,
-          travelMode: window.google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          resolve({ status, result, wayPoints });
-        }
-      );
-    });
-  }
-
-  setCurrentLocation = (wayPoints) => {
-    let count = 0;
-    let refreshIntervalId = setInterval(() => {
-      // console.log("wayPoints:", wayPoints);
-      if (wayPoints) {
-        if (count <= wayPoints.length - 1) {
-          const currentLocation = convertLatLngToObj(
-            wayPoints[count].lat(),
-            wayPoints[count].lng()
-          );
-          this.setState({ currentLocation });
-          const wayPts = [];
-          wayPts.push(currentLocation);
-          const startLoc = this.props.from.lat + ", " + this.props.from.lng;
-          const destinationLoc = this.props.to.lat + ", " + this.props.to.lng;
-          this.delayFactor = 0;
-          this.getDirectionsPromise(startLoc, destinationLoc, wayPts);
-          count++;
-        } else {
-          clearInterval(refreshIntervalId);
-        }
-      }
-    }, 1000);
-  };
   render() {
-    let originMarker = null;
-    let destinationMarker = null;
-    if (this.state.directions && this.props.index) {
-      originMarker = (
-        <Marker
-          // defaultLabel={this.props.index.toString()}
-          defaultIcon={null}
-          position={{
-            lat: parseFloat(this.props.from.lat),
-            lng: parseFloat(this.props.from.lng),
-          }}
-        />
-      );
-      destinationMarker = (
-        <Marker
-          label={this.props.index.toString()}
-          defaultIcon={null}
-          position={{
-            lat: parseFloat(this.props.to.lat),
-            lng: parseFloat(this.props.to.lng),
-          }}
-        />
-      );
-    }
+    const { viewport } = this.state;
+    const MAPBOX_TOKEN =
+      "pk.eyJ1IjoibXVoYW1tYWQtemFoaWQiLCJhIjoiY2w0Mmo0YmZvMDVjNjNmbWxzbzRmZHhodSJ9.-5UYBxiWXPaUdIQv9LqSzQ";
+
+    const dataOne = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [-122.41510269913951, 37.77909036739809],
+          [39.5423, -77.0564],
+        ],
+      },
+    };
     return (
-      <div>
-        {originMarker}
-        {destinationMarker}
-        {this.state.currentLocation && (
-          <Marker
-            position={{
-              lat: this.state.currentLocation.lat,
-              lng: this.state.currentLocation.lng,
+      <ReactMapGL
+        {...viewport}
+        mapboxApiAccessToken={MAPBOX_TOKEN}
+        onViewportChange={(newViewport) => {
+          this.setState({ viewport: newViewport });
+        }}
+      >
+        <Source id="polylineLayer" type="geojson" data={dataOne}>
+          <Layer
+            id="lineLayer"
+            type="line"
+            source="my-data"
+            layout={{
+              "line-join": "round",
+              "line-cap": "round",
+            }}
+            paint={{
+              "line-color": "rgba(3, 170, 238, 0.5)",
+              "line-width": 5,
             }}
           />
-        )}
-        {this.state.directions && (
-          <DirectionsRenderer
-            directions={this.state.directions}
-            options={{
-              polylineOptions: {
-                storkeColor: this.props.storkeColor,
-                strokeOpacity: 0.4,
-                strokeWeight: 4,
-              },
-              preserveViewport: true,
-              suppressMarkers: true,
-              icon: { scale: 3 },
-            }}
-          />
-        )}
-      </div>
+        </Source>
+      </ReactMapGL>
     );
   }
 }
-
-export default DirectionRenderComponentAsync;
+export default Maps;
