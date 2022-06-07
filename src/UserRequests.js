@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { SiGooglemaps } from "react-icons/si";
@@ -18,6 +18,7 @@ const UserRequests = ({ onLogout }) => {
   const [position, setPosition] = useState([]);
   const [showMap, setShwoMap] = useState(false);
   const [latitude, setLatitude] = useState("");
+  const [searchText, setSearchText] = useState("");
   const [longitude, setLongitude] = useState("");
 
   useEffect(() => {
@@ -47,6 +48,13 @@ const UserRequests = ({ onLogout }) => {
     }
   };
 
+  var result = useMemo(() => {
+    if (!searchText) return requests;
+    return requests.filter((x) =>
+      x.Workshop.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, requests]);
+
   const updateStatus = async (id, status) => {
     const response = await api.post("/updateRequest", {
       id: id,
@@ -73,11 +81,12 @@ const UserRequests = ({ onLogout }) => {
           </div>
 
           <div className="header-search">
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
               <div className="search">
                 <input
                   type="search"
-                  value=""
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
                   className="form-control"
                   placeholder="what happened with you"
                   id="gsearch"
@@ -118,8 +127,8 @@ const UserRequests = ({ onLogout }) => {
                 </tr>
               </thead>
               <tbody>
-                {requests &&
-                  requests.map((req, ind) => {
+                {result &&
+                  result.map((req, ind) => {
                     return (
                       <tr key={ind}>
                         <td>{ind + 1}</td>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
 import { BsXLg } from "react-icons/bs";
@@ -20,6 +20,7 @@ const ShopManage = (onLogout) => {
   const [showMap, setShwoMap] = useState(false);
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -48,6 +49,13 @@ const ShopManage = (onLogout) => {
     setShwoMap(true);
   };
 
+  var result = useMemo(() => {
+    if (!searchText) return requests;
+    return requests.filter((x) =>
+      x.vehicle_name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, requests]);
+
   const updateStatus = async (id, status) => {
     const response = await api.post("/updateRequest", {
       id: id,
@@ -74,11 +82,12 @@ const ShopManage = (onLogout) => {
           </div>
 
           <div className="header-search">
-            <form>
+            <form onSubmit={(e) => e.preventDefault()}>
               <div className="search">
                 <input
                   type="search"
-                  value=""
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
                   className="form-control"
                   placeholder="what happened with you"
                   id="gsearch"
@@ -121,8 +130,8 @@ const ShopManage = (onLogout) => {
                 </tr>
               </thead>
               <tbody>
-                {requests &&
-                  requests.map((req, ind) => {
+                {result &&
+                  result.map((req, ind) => {
                     return (
                       <tr key={ind}>
                         <td>{ind + 1}</td>
