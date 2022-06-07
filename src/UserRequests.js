@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { api } from "./services/apiSvc";
 import { Badge, Button } from "react-bootstrap";
 import { Profile } from "./services/Profile";
+import notificationSvc from "./services/notificationSvc";
 
 const UserRequests = ({ onLogout }) => {
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
@@ -20,6 +21,17 @@ const UserRequests = ({ onLogout }) => {
     const response = await api.get("/getUserRequests");
     if (response && response.ok) {
       setRequests(response.data);
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    const response = await api.post("/updateRequest", {
+      id: id,
+      status: status,
+    });
+    if (response && response.ok) {
+      notificationSvc.success("Request " + status + " Successfully");
+      getRequests();
     }
   };
 
@@ -110,6 +122,7 @@ const UserRequests = ({ onLogout }) => {
                               variant="primary"
                               style={{ marginRight: "10px" }}
                               className="fab"
+                              onClick={() => updateStatus(req._id, "Completed")}
                             >
                               <BiCheck />
                             </Button>
