@@ -16,6 +16,9 @@ import { useEffect, useState } from "react";
 import spinnerSvc from "./services/spinnerSvc";
 import LoaderSpinner from "./services/modal";
 import { ToastContainer } from "react-toastify";
+import ShopManage from "./Shopmanage";
+import UserRequests from "./UserRequests";
+import Maps from "./services/Maps";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -61,12 +64,36 @@ function App() {
               </>
             ) : (
               <>
-                <Route path="/" element={<Navigate to="/MainShops" />} />
-                <Route path="*" element={<Navigate to="/MainShops" />} />
-                <Route
-                  path="/MainShops"
-                  element={<MainShops onLogout={() => setLoggedIn(false)} />}
-                />
+                {user?.role === "Customer" ? (
+                  <>
+                    <Route path="/" element={<Navigate to="/MainShops" />} />
+                    <Route path="*" element={<Navigate to="/MainShops" />} />
+                    <Route
+                      path="/MainShops"
+                      element={
+                        <MainShops onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
+                    <Route
+                      path="/UserRequests"
+                      element={
+                        <UserRequests onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Route path="/" element={<Navigate to="/Requests" />} />
+                    <Route path="*" element={<Navigate to="/Requests" />} />
+                    <Route path="/map" element={<Maps />} />
+                    <Route
+                      path="/Requests"
+                      element={
+                        <ShopManage onLogout={() => setLoggedIn(false)} />
+                      }
+                    />
+                  </>
+                )}
               </>
             )}
           </Routes>

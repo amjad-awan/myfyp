@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { BiSearch } from "react-icons/bi";
 import { BiCheck } from "react-icons/bi";
-import { BsXLg } from "react-icons/bs";
 import { SiGooglemaps } from "react-icons/si";
-import { images } from "../src/Api/Images";
+import { images } from "./Api/Images";
 import { Link } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 import { api } from "./services/apiSvc";
@@ -12,15 +11,15 @@ import { Profile } from "./services/Profile";
 import notificationSvc from "./services/notificationSvc";
 import Maps from "./services/Maps";
 
-const ShopManage = (onLogout) => {
+const UserRequests = ({ onLogout }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
   const [position, setPosition] = useState([]);
   const [showMap, setShwoMap] = useState(false);
   const [latitude, setLatitude] = useState("");
-  const [longitude, setLongitude] = useState("");
   const [searchText, setSearchText] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(function (position) {
@@ -33,13 +32,6 @@ const ShopManage = (onLogout) => {
     getRequests();
   }, []);
 
-  const getRequests = async () => {
-    const response = await api.get("/getAllRequest");
-    if (response && response.ok) {
-      setRequests(response.data);
-    }
-  };
-
   const seeMap = (name, lat, long) => {
     setPosition([
       ...position,
@@ -49,10 +41,17 @@ const ShopManage = (onLogout) => {
     setShwoMap(true);
   };
 
+  const getRequests = async () => {
+    const response = await api.get("/getUserRequests");
+    if (response && response.ok) {
+      setRequests(response.data);
+    }
+  };
+
   var result = useMemo(() => {
     if (!searchText) return requests;
     return requests.filter((x) =>
-      x.vehicle_name.toLowerCase().includes(searchText.toLowerCase())
+      x.Workshop.name.toLowerCase().includes(searchText.toLowerCase())
     );
   }, [searchText, requests]);
 
@@ -119,10 +118,8 @@ const ShopManage = (onLogout) => {
               <thead>
                 <tr>
                   <th>Sr#</th>
-                  <th>Vehicle Name</th>
-                  <th>Vehicle Type</th>
-                  <th>Vehicle Model</th>
-                  <th>Fault</th>
+                  <th>Workshop Name</th>
+                  <th>Workshop Address</th>
                   <th>Phone Number</th>
                   <th>Location</th>
                   <th>Status</th>
@@ -135,11 +132,9 @@ const ShopManage = (onLogout) => {
                     return (
                       <tr key={ind}>
                         <td>{ind + 1}</td>
-                        <td>{req.vehicle_name}</td>
-                        <td>{req.vehicle_type}</td>
-                        <td>{req.vehicle_model}</td>
-                        <td>{req.fault}</td>
-                        <td>{req.phone}</td>
+                        <td>{req.Workshop.name}</td>
+                        <td>{req.Workshop.address}</td>
+                        <td>{req.Workshop.mobile}</td>
                         <td>
                           <SiGooglemaps
                             style={{ fontSize: "20px" }}
@@ -167,29 +162,15 @@ const ShopManage = (onLogout) => {
                           </Badge>
                         </td>
                         <td>
-                          {req.status === "Pending" && (
-                            <>
-                              <Button
-                                variant="primary"
-                                style={{ marginRight: "10px" }}
-                                onClick={() =>
-                                  updateStatus(req._id, "Accepted")
-                                }
-                                className="fab"
-                              >
-                                <BiCheck />
-                              </Button>
-                              <Button
-                                variant="danger"
-                                style={{ fontSize: "14px" }}
-                                onClick={() =>
-                                  updateStatus(req._id, "Rejected")
-                                }
-                                className="fab"
-                              >
-                                <BsXLg />
-                              </Button>
-                            </>
+                          {req.status === "Accepted" && (
+                            <Button
+                              variant="primary"
+                              style={{ marginRight: "10px" }}
+                              className="fab"
+                              onClick={() => updateStatus(req._id, "Completed")}
+                            >
+                              <BiCheck />
+                            </Button>
                           )}
                         </td>
                       </tr>
@@ -214,4 +195,4 @@ const ShopManage = (onLogout) => {
   );
 };
 
-export default ShopManage;
+export default UserRequests;
