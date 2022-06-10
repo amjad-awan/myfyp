@@ -138,7 +138,7 @@ const CustomerLogin = ({ onLogin }) => {
             <Link to="/CustomerRegister" className="no-account-link">
               if didn't registor yet, click here to registor
             </Link>
-            <div className="or-line">
+            {/* <div className="or-line">
               <span className="or"> or login with</span>
             </div>
 
@@ -149,7 +149,7 @@ const CustomerLogin = ({ onLogin }) => {
               <span>
                 <FiFacebook />
               </span>
-            </div>
+            </div> */}
           </div>
         </section>
       </div>

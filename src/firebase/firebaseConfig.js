@@ -1,9 +1,8 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyDiN_D_PirnPGHowfMGGTQvFtMiFpLzk6I",
-  authDomain: "react-authentication-22cd3.firebaseapp.com",
-  databaseURL: "https://react-authentication-22cd3-default-rtdb.firebaseio.com",
-  projectId: "react-authentication-22cd3",
-  storageBucket: "react-authentication-22cd3.appspot.com",
-  messagingSenderId: "650397259655",
-  appId: "1:650397259655:web:d2215dec90320d28566522",
+          apiKey: "AIzaSyApGnmmkfGbG6lThxdZqJz7KcrilJDdvzk",
+          authDomain: "quick-woodland-352311.firebaseapp.com",
+          projectId: "quick-woodland-352311",
+          storageBucket: "quick-woodland-352311.appspot.com",
+          messagingSenderId: "711421175806",
+          appId: "1:711421175806:web:c8d3e28b1cc5594faec2af",
 };
