@@ -18,7 +18,9 @@ import LoaderSpinner from "./services/modal";
 import { ToastContainer } from "react-toastify";
 import ShopManage from "./Shopmanage";
 import UserRequests from "./UserRequests";
-import Maps from "./services/Maps";
+import WorkshopProfile from "./Profile";
+import UserProfile from "./UserProfile";
+import ForgotPassword from "./ForgotPassword";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -53,6 +55,7 @@ function App() {
                   path="/CustomerRegister"
                   element={<Customerregistor />}
                 />
+                <Route path="/ForgotPassword" element={<ForgotPassword />} />
                 <Route
                   path="/WorkShopLogIn"
                   element={<WorkShopLogIn onLogin={() => setLoggedIn(true)} />}
@@ -80,12 +83,13 @@ function App() {
                         <UserRequests onLogout={() => setLoggedIn(false)} />
                       }
                     />
+                    <Route path="/profile" element={<UserProfile />} />
                   </>
                 ) : (
                   <>
                     <Route path="/" element={<Navigate to="/Requests" />} />
                     <Route path="*" element={<Navigate to="/Requests" />} />
-                    <Route path="/map" element={<Maps />} />
+                    <Route path="/profile" element={<WorkshopProfile />} />
                     <Route
                       path="/Requests"
                       element={

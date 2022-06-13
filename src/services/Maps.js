@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   GoogleMap,
   InfoWindow,
@@ -67,11 +67,14 @@ function Maps(props) {
           position={position}
           onClick={() => handleActiveMarker(id)}
         >
-          {activeMarker === id ? (
-            <InfoWindow onCloseClick={() => setActiveMarker(null)}>
-              <div>{name}</div>
-            </InfoWindow>
-          ) : null}
+          {/* {activeMarker === id ? ( */}
+          <InfoWindow
+            position={position}
+            onCloseClick={() => setActiveMarker(null)}
+          >
+            <div>{name}</div>
+          </InfoWindow>
+          {/* ) : null} */}
         </Marker>
       ))}
     </GoogleMap>

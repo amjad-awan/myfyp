@@ -11,8 +11,10 @@ import { Badge, Button } from "react-bootstrap";
 import { Profile } from "./services/Profile";
 import notificationSvc from "./services/notificationSvc";
 import Maps from "./services/Maps";
+import { render } from "@testing-library/react";
+import Avatar from "./services/Avatar";
 
-const ShopManage = (onLogout) => {
+const ShopManage = ({ onLogout }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [showCustomerProfile, setShowCustomerprofile] = useState(false);
   const [requests, setRequests] = useState([]);
@@ -40,11 +42,10 @@ const ShopManage = (onLogout) => {
     }
   };
 
-  const seeMap = (name, lat, long) => {
+  const seeMap = (name, lat, long, lat2, long2) => {
     setPosition([
-      ...position,
       { name: name, latitude: lat, longitude: long },
-      { name: user.name, latitude: latitude, longitude: longitude },
+      { name: user.name, latitude: lat2, longitude: long2 },
     ]);
     setShwoMap(true);
   };
@@ -103,11 +104,7 @@ const ShopManage = (onLogout) => {
             className="customer-profile"
             onClick={() => setShowCustomerprofile(!showCustomerProfile)}
           >
-            <img
-              src={images.customer}
-              alt=""
-              className="customer-profile-img"
-            />
+            <Avatar />
             {showCustomerProfile && <Profile onLogout={onLogout} />}
           </div>
         </div>
@@ -115,88 +112,94 @@ const ShopManage = (onLogout) => {
       <div className="request-table">
         <div className="container">
           <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Sr#</th>
-                  <th>Vehicle Name</th>
-                  <th>Vehicle Type</th>
-                  <th>Vehicle Model</th>
-                  <th>Fault</th>
-                  <th>Phone Number</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result &&
-                  result.map((req, ind) => {
-                    return (
-                      <tr key={ind}>
-                        <td>{ind + 1}</td>
-                        <td>{req.vehicle_name}</td>
-                        <td>{req.vehicle_type}</td>
-                        <td>{req.vehicle_model}</td>
-                        <td>{req.fault}</td>
-                        <td>{req.phone}</td>
-                        <td>
-                          <SiGooglemaps
-                            style={{ fontSize: "20px" }}
-                            onClick={() =>
-                              seeMap(
-                                req.Workshop.name,
-                                req.Workshop.latitude,
-                                req.Workshop.longitude
-                              )
-                            }
-                          />
-                        </td>
-                        <td>
-                          <Badge
-                            bg={
-                              req.status === "Pending"
-                                ? "warning"
-                                : req.status === "Rejected"
-                                ? "danger"
-                                : "primary"
-                            }
-                            text="dark"
-                          >
-                            {req.status}
-                          </Badge>
-                        </td>
-                        <td>
-                          {req.status === "Pending" && (
-                            <>
-                              <Button
-                                variant="primary"
-                                style={{ marginRight: "10px" }}
-                                onClick={() =>
-                                  updateStatus(req._id, "Accepted")
-                                }
-                                className="fab"
-                              >
-                                <BiCheck />
-                              </Button>
-                              <Button
-                                variant="danger"
-                                style={{ fontSize: "14px" }}
-                                onClick={() =>
-                                  updateStatus(req._id, "Rejected")
-                                }
-                                className="fab"
-                              >
-                                <BsXLg />
-                              </Button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+            {result.length > 0 ? (
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Sr#</th>
+                    <th>Vehicle Name</th>
+                    <th>Vehicle Type</th>
+                    <th>Vehicle Model</th>
+                    <th>Fault</th>
+                    <th>Phone Number</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {result &&
+                    result.map((req, ind) => {
+                      return (
+                        <tr key={ind}>
+                          <td>{ind + 1}</td>
+                          <td>{req.vehicle_name}</td>
+                          <td>{req.vehicle_type}</td>
+                          <td>{req.vehicle_model}</td>
+                          <td>{req.fault}</td>
+                          <td>{req.phone}</td>
+                          <td>
+                            <SiGooglemaps
+                              style={{ fontSize: "20px" }}
+                              onClick={() =>
+                                seeMap(
+                                  req.user_name,
+                                  req.latitude,
+                                  req.longitude,
+                                  req.Workshop.latitude,
+                                  req.Workshop.longitude
+                                )
+                              }
+                            />
+                          </td>
+                          <td>
+                            <Badge
+                              bg={
+                                req.status === "Pending"
+                                  ? "warning"
+                                  : req.status === "Rejected"
+                                  ? "danger"
+                                  : "primary"
+                              }
+                              text="dark"
+                            >
+                              {req.status}
+                            </Badge>
+                          </td>
+                          <td>
+                            {req.status === "Pending" && (
+                              <>
+                                <Button
+                                  variant="primary"
+                                  style={{ marginRight: "10px" }}
+                                  onClick={() =>
+                                    updateStatus(req._id, "Accepted")
+                                  }
+                                  className="fab"
+                                >
+                                  <BiCheck />
+                                </Button>
+                                <Button
+                                  variant="danger"
+                                  style={{ fontSize: "14px" }}
+                                  onClick={() =>
+                                    updateStatus(req._id, "Rejected")
+                                  }
+                                  className="fab"
+                                >
+                                  <BsXLg />
+                                </Button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            ) : (
+              <p className="para">No request found</p>
+            )}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import { Badge, Button } from "react-bootstrap";
 import { Profile } from "./services/Profile";
 import notificationSvc from "./services/notificationSvc";
 import Maps from "./services/Maps";
+import Avatar from "./services/Avatar";
 
 const UserRequests = ({ onLogout }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -102,11 +103,7 @@ const UserRequests = ({ onLogout }) => {
             className="customer-profile"
             onClick={() => setShowCustomerprofile(!showCustomerProfile)}
           >
-            <img
-              src={images.customer}
-              alt=""
-              className="customer-profile-img"
-            />
+            <Avatar />
             {showCustomerProfile && <Profile onLogout={onLogout} />}
           </div>
         </div>

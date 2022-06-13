@@ -20,7 +20,7 @@ export const Profile = ({ onLogout }) => {
   return (
     <div className="profile-data">
       <p className="name">{user?.name}</p>
-      <p className="edit-profile">
+      <p className="edit-profile" onClick={() => navigate("/profile")}>
         <FiEdit /> Edit profile
       </p>
       <p className="logout" onClick={() => logout()}>

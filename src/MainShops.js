@@ -10,9 +10,11 @@ import { firebaseConfig } from "./firebase/firebaseConfig";
 import { RequestForm } from "./services/RequestForm";
 import { Profile } from "./services/Profile";
 import Maps from "./services/Maps";
+import Avatar from "./services/Avatar";
 
 const MainShops = ({ onLogout }) => {
   initializeApp(firebaseConfig);
+  let splitted;
   const user = JSON.parse(localStorage.getItem("user"));
   const isMounted = useRef(false);
   const navigate = useNavigate();
@@ -103,7 +105,8 @@ const MainShops = ({ onLogout }) => {
   const hideMap = () => {
     setShwoMap(false);
   };
-  console.log(position);
+
+  console.log(splitted);
   return (
     <>
       <div className="main-container">
@@ -137,11 +140,7 @@ const MainShops = ({ onLogout }) => {
               className="customer-profile"
               onClick={() => setShowCustomerprofile(!showCustomerProfile)}
             >
-              <img
-                src={images.customer}
-                className="customer-profile-img"
-                alt=""
-              />
+              <Avatar />
               {showCustomerProfile && <Profile onLogout={onLogout} />}
             </div>
           </div>
@@ -149,55 +148,62 @@ const MainShops = ({ onLogout }) => {
 
         <div className="shops-top">
           <div className="container">
-            <p className="mr-auto recommend">{result.length} Results</p>
-            <Link className="btn btn-primary" to="/UserRequests">
-              My Requests
-            </Link>
-            <div className="shops-container">
-              {result.map((shop, index) => {
-                const { imageUrl, distance, name, type, address, mobile } =
-                  shop;
-                return (
-                  <div className="single-shop" key={index}>
-                    <div className="shop-img-container">
-                      <img src={imageUrl} className="shop-img" alt="" />
-                      <div className="distance">
-                        <p>{distance} KM</p>
-
-                        <p
-                          className="map"
-                          onClick={() =>
-                            seeMap(name, shop.latitude, shop.longitude)
-                          }
-                        >
-                          see on map <FiMapPin />
-                        </p>
-                      </div>
-                    </div>
-                    <div className="shop-data">
-                      <div className="data-inner-wrapper">
-                        <div className="name-typ">
-                          <p className="shop-name">{name}</p>
-                          <p className="shop-name">{type}</p>
-                        </div>
-                        <p className="address">{address}</p>
-                        <p className="phoneno">{mobile}</p>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleShow();
-                        setSelected(shop._id);
-                      }}
-                      className="contact-btn"
-                    >
-                      Contact
-                    </button>
-                  </div>
-                );
-              })}
+            <div className="results">
+              <p className="mr-auto recommend">{result.length} Results</p>
+              <Link className="my-req" to="/UserRequests">
+                My Requests 
+              </Link>
             </div>
+
+            {result.length > 0 ? (
+              <div className="shops-container">
+                {result.map((shop, index) => {
+                  const { imageUrl, distance, name, type, address, mobile } =
+                    shop;
+                  return (
+                    <div className="single-shop" key={index}>
+                      <div className="shop-img-container">
+                        <img src={imageUrl} className="shop-img" alt="" />
+                        <div className="distance">
+                          <p>{distance} KM</p>
+
+                          <p
+                            className="map"
+                            onClick={() =>
+                              seeMap(name, shop.latitude, shop.longitude)
+                            }
+                          >
+                            see on map <FiMapPin />
+                          </p>
+                        </div>
+                      </div>
+                      <div className="shop-data">
+                        <div className="data-inner-wrapper">
+                          <div className="name-typ">
+                            <p className="shop-name">{name}</p>
+                            <p className="shop-name">{type}</p>
+                          </div>
+                          <p className="address">{address}</p>
+                          <p className="phoneno">{mobile}</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleShow();
+                          setSelected(shop._id);
+                        }}
+                        className="contact-btn"
+                      >
+                        Contact
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="para">No result found</p>
+            )}
           </div>
         </div>
 
