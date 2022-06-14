@@ -45,7 +45,7 @@ function App() {
       <div className="App">
         <Router>
           <Routes>
-            {isLoggedIn ? (
+            {!isLoggedIn ? (
               <>
                 <Route path="*" element={<Navigate to="/" />} />
                 <Route
@@ -68,7 +68,7 @@ function App() {
               </>
             ) : (
               <>
-                {user?.role !== "Customer" ? (
+                {user?.role === "Customer" ? (
                   <>
                     <Route path="/" element={<Navigate to="/MainShops" />} />
                     <Route path="*" element={<Navigate to="/MainShops" />} />
