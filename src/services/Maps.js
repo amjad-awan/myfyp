@@ -1,86 +1,67 @@
-import React, { useEffect, useState } from "react";
-import {
-  GoogleMap,
-  InfoWindow,
-  Marker,
-  useJsApiLoader,
-} from "@react-google-maps/api";
+import React, { useState } from "react";
+import { DirectionsRenderer, GoogleMap } from "@react-google-maps/api";
 
-const containerStyle = {
-  width: "400px",
-  height: "400px",
-};
+function Maps({ zoom, destination, origin }) {
+  var markers = [];
+  const [direction, setDirection] = useState(null);
+  const directionsService = new window.google.maps.DirectionsService();
+  console.log(destination, origin);
 
-const center = {
-  lat: -3.745,
-  lng: -38.523,
-};
+  // if (props.value.length > 0) {
+  //   markers = props.value.map((x, i) => {
+  //     return {
+  //       id: i,
+  //       name: x.username,
+  //       position: {
+  //         lat: x.address?.latitude || -32.7509684,
+  //         lng: x.address?.longitude || 145.5622894,
+  //       },
+  //     };
+  //   });
+  // }
 
-function Maps(props) {
-  const [activeMarker, setActiveMarker] = useState("");
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: "AIzaSyB7R4wPyILvLMpGIN8zOCAA52oSPpLdLWQ",
-  });
-
-  let markers = [];
-
-  const handleActiveMarker = (marker) => {
-    if (marker === activeMarker) {
-      return;
-    }
-    setActiveMarker(marker);
+  const changeDirection = (origin, destination) => {
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: window.google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === window.google.maps.DirectionsStatus.OK) {
+          //changing the state of directions to the result of direction service
+          setDirection(result);
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      }
+    );
   };
 
-  if (props.value.length > 0) {
-    markers = props.value.map((x, i) => {
-      return {
-        id: i,
-        name: x.name,
-        position: {
-          lat: x.latitude,
-          lng: x.longitude,
-        },
-      };
-    });
-  }
+  const handleOnLoad = (map) => {
+    changeDirection(origin, destination);
+    const bounds = new window.google.maps.LatLngBounds();
+    bounds.extend(destination);
+    bounds.extend(origin);
+    markers.push({ id: 1, name: "Lahore", position: origin });
+    markers.push({ id: 2, name: "Mianwali", position: destination });
+    map.fitBounds(bounds);
+  };
 
-  const onLoad = React.useCallback(function callback(map) {
-    if (markers.length > 1) {
-      const bounds = new window.google.maps.LatLngBounds();
-      markers.forEach(({ position }) => bounds.extend(position));
-      map.fitBounds(bounds);
-    }
-  }, []);
-
-  return isLoaded ? (
+  return (
     <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={10}
-      onLoad={onLoad}
-      // onUnmount={onUnmount}
+      onLoad={handleOnLoad}
+      zoom={4}
+      // onClick={() => setActiveMarker(null)}
+      mapContainerStyle={
+        zoom
+          ? { width: "200", height: "560px" }
+          : { width: "100", height: "200px" }
+      }
     >
-      {markers.map(({ id, name, position }) => (
-        <Marker
-          key={id}
-          position={position}
-          onClick={() => handleActiveMarker(id)}
-        >
-          {/* {activeMarker === id ? ( */}
-          <InfoWindow
-            position={position}
-            onCloseClick={() => setActiveMarker(null)}
-          >
-            <div>{name}</div>
-          </InfoWindow>
-          {/* ) : null} */}
-        </Marker>
-      ))}
+      {direction !== null && <DirectionsRenderer directions={direction} />}
     </GoogleMap>
-  ) : (
-    <></>
   );
 }
 
-export default React.memo(Maps);
+export default Maps;

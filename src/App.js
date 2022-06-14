@@ -21,6 +21,7 @@ import UserRequests from "./UserRequests";
 import WorkshopProfile from "./Profile";
 import UserProfile from "./UserProfile";
 import ForgotPassword from "./ForgotPassword";
+import Map from "./services/Maps";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -44,7 +45,7 @@ function App() {
       <div className="App">
         <Router>
           <Routes>
-            {!isLoggedIn ? (
+            {isLoggedIn ? (
               <>
                 <Route path="*" element={<Navigate to="/" />} />
                 <Route
@@ -67,10 +68,11 @@ function App() {
               </>
             ) : (
               <>
-                {user?.role === "Customer" ? (
+                {user?.role !== "Customer" ? (
                   <>
                     <Route path="/" element={<Navigate to="/MainShops" />} />
                     <Route path="*" element={<Navigate to="/MainShops" />} />
+                    <Route path="/map" element={<Map />} />
                     <Route
                       path="/MainShops"
                       element={

@@ -5,12 +5,13 @@ import { FiMapPin } from "react-icons/fi";
 import { ImCross } from "react-icons/im";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "./services/apiSvc";
+import { useGeolocated } from "react-geolocated";
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebase/firebaseConfig";
 import { RequestForm } from "./services/RequestForm";
 import { Profile } from "./services/Profile";
-import Maps from "./services/Maps";
 import Avatar from "./services/Avatar";
+import Maps from "./services/Maps";
 
 const MainShops = ({ onLogout }) => {
   initializeApp(firebaseConfig);
@@ -36,6 +37,17 @@ const MainShops = ({ onLogout }) => {
     });
   }, []);
 
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+
+      userDecisionTimeout: 3000,
+    });
+
+  console.log(coords);
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -60,13 +72,9 @@ const MainShops = ({ onLogout }) => {
           };
         })
       );
-      setPosition([
-        ...position,
-        { name: user.name, latitude: latitude, longitude: longitude },
-      ]);
+      setPosition([...position, { lat: latitude, lng: longitude }]);
     }
   };
-
   var result = useMemo(() => {
     if (!searchText) return shopsData;
     return shopsData.filter((x) =>
@@ -98,7 +106,7 @@ const MainShops = ({ onLogout }) => {
   };
 
   const seeMap = (name, lat, long) => {
-    setPosition([...position, { name: name, latitude: lat, longitude: long }]);
+    setPosition([...position, { lat: lat, lng: long }]);
     setShwoMap(true);
   };
 
@@ -151,7 +159,7 @@ const MainShops = ({ onLogout }) => {
             <div className="results">
               <p className="mr-auto recommend">{result.length} Results</p>
               <Link className="my-req" to="/UserRequests">
-                My Requests 
+                My Requests
               </Link>
             </div>
 
@@ -213,7 +221,7 @@ const MainShops = ({ onLogout }) => {
               <ImCross />
             </button>
             <div>
-              <Maps value={position} />
+              <Maps destination={position[0]} origin={position[1]} />
             </div>
           </div>
         )}
