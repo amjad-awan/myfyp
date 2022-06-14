@@ -55,7 +55,7 @@ const WorkShopRegistor = () => {
   }, []);
 
   const handleLocation = (e) => {
-    Geocode.setApiKey("AIzaSyB7R4wPyILvLMpGIN8zOCAA52oSPpLdLWQ");
+    Geocode.setApiKey("AIzaSyDGheosqin8IXJ_rMczxWeWe20o99nx1KQ");
     setAddress(e);
     Geocode.setLanguage("en");
     Geocode.setRegion("");

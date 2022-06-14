@@ -56,7 +56,7 @@ function Maps({ zoom, destination, origin }) {
       mapContainerStyle={
         zoom
           ? { width: "200", height: "560px" }
-          : { width: "100", height: "200px" }
+          : { width: "100", height: "400px" }
       }
     >
       {direction !== null && <DirectionsRenderer directions={direction} />}
